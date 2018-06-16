@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>snake game</title>
+    <style>
+
+        #snake{
+            position: fixed;
+            top:100px;
+            left: 400px;
+
+        }
+        #food{
+            position: fixed;
+            padding: 3px;
+            border-radius: 3px;
+        }
+        canvas{
+            border: 1px solid black;
+            position: absolute; top: 20px;
+
+        }
+        .ts{
+            float: right;
+            width: 400px;
+            height: 400px;
+            margin-top: 20%  ;
+
+        }
+
+    </style>
+</head>
+<link href="bootstrap.min.css" rel="stylesheet" type="text/css">
+<body onload="setInsectposition();" onkeydown="return handlekeys(event);" class="container">
+<div class="ts">
+    <div style="width: 200px;font-size: 30px;padding-bottom: 30px">Time: <span id="timer"></span></div>
+    <div style="width: 200px;font-size: 30px">Score: <span id="sco">0</span></div>
+</div>
+    <img src="PDF-Snake.gif" id="snake">
+    <img src="download.png" id="food">
+
+<script>
+    /*                                           start time                                      */
+    var remainingTime = 30;
+    var timer = document.getElementById("timer");
+    timer.innerHTML = remainingTime;
+        function  startCountDownTimer() {
+
+            setInterval(function(){
+                    if(Number(timer.innerHTML) <= 0){
+                        gameOver();
+                        return;
+                    }
+                    timer.innerHTML = Number(timer.innerHTML) -1;
+                }
+                , 1000);
+        }
+    startCountDownTimer();
+
+    function gameOver(){
+        alert("وقت تمام شد!\n برای شروع کلیک کنید");
+        location.reload();
+    }
+    /*                                         start score                                       */
+    var score = -1;
+    var sco = document.getElementById("sco");
+    sco.innerHTML = score;
+
+    function startCountUpTimer(){
+        if(Number(timer.innerHTML) <= 0){
+        }
+        sco.innerHTML = Number(sco.innerHTML) + 1;
+        setTimeout(function(){startCountUpTimer()} , 100000);
+    }
+    /*                                      create canvas                                       */
+    var myGameArea = {
+        canvas : document.createElement("canvas"),
+        start : function() {
+            this.canvas.width = 500;
+            this.canvas.height = 500;
+            this.context = this.canvas.getContext("2d");
+            document.body.insertBefore(this.canvas, document.body.childNodes[0]);
+
+        }
+    };
+    function setInsectposition() {
+         console.log(myGameArea.canvas.offsetLeft)
+        myGameArea.start();
+        //var snake= document.getElementById('snake');
+        //snake.style.top=Math.random()*(myGameArea.canvas.offsetTop,myGameArea.canvas.height-snake.height)+"px";
+        //snake.style.left=Math.random()*(myGameArea.canvas.offsetLeft,myGameArea.canvas.width-snake.width)+"px";
+
+        var food=document.getElementById('food');
+        food.style.top=  myGameArea.canvas.offsetTop + (Math.random()*(myGameArea.canvas.height-snake.height)) +"px";
+            food.style.left=  myGameArea.canvas.offsetLeft + (Math.random()*(myGameArea.canvas.width-snake.width)) +"px";
+        startCountUpTimer();
+    }
+    /*                                       create keyboard                                              */
+    function handlekeys(event) {
+        if(event.keyCode==38){
+            moveSnake('up');
+        }else if(event.keyCode==40){
+            moveSnake('down');
+        }else if(event.keyCode==37){
+            moveSnake('left');
+        }else if(event.keyCode==39){
+            moveSnake('right');
+        }
+        if(youWin()){
+           //location.reload();
+               setInsectposition();
+        }
+    }
+    /*                                      move snake                                                   */
+    function moveSnake(direction) {
+        var snake = document.getElementById('snake');
+        var d = 20;
+        switch (direction) {
+            case "up" :
+                if( (snake.offsetTop - d) >= myGameArea.canvas.offsetTop ) {
+                    snake.style.top = (snake.offsetTop - d) + "px";
+                }else{
+                    snake.style.top = myGameArea.canvas.offsetTop+myGameArea.canvas.height-snake.height + "px";
+                   // console.log('TELEPORT ! ',myGameArea.canvas.offsetTop+myGameArea.canvas.height-snake.height);
+                }/*else if(snake <= myGameArea.canvas.offsetTop){
+                    snake.offsetTop+=myGameArea.offsetTop;
+                }*/
+                break;
+            case "down":
+                if( (snake.offsetTop + d) <= myGameArea.canvas.offsetTop + myGameArea.canvas.height-snake.height ) {
+                    snake.style.top = (snake.offsetTop + d) + "px";
+                }else {
+                    snake.style.top = myGameArea.canvas.offsetTop + "px";
+
+                }
+        break;
+    case "left":
+        if( (snake.offsetLeft - d) >= myGameArea.canvas.offsetLeft ) {
+            snake.style.left = (snake.offsetLeft - d) + "px";
+        }else {
+            snake.style.left = myGameArea.canvas.offsetLeft + myGameArea.canvas.width-snake.width + "px";
+
+        }
+        break;
+      case "right":
+                if( (snake.offsetLeft + d) < myGameArea.canvas.offsetLeft + myGameArea.canvas.width-snake.width ) {
+                    snake.style.left = (snake.offsetLeft + d) + "px";
+                }else {
+                    snake.style.left = myGameArea.canvas.offsetLeft + "px";
+                }
+                break;
+        }
+    }
+
+    /*                                             eat food                                               */
+    function youWin() {
+        var snake= document.getElementById('snake');
+        var food=document.getElementById('food');
+        if(Math.abs(food.offsetTop-snake.offsetTop)<20 && Math.abs(food.offsetLeft-snake.offsetLeft)<20){
+            return true;
+        }else {
+            return false;
+        }
+    }
+</script>
+<script src="bootstrap.min.js"></script>
+</body>
+</html>
